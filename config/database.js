@@ -10,14 +10,16 @@ let db;
   //     idle: 10000
   //   },
   // });
-  db =  new Sequelize(postgreUri, {
-    // host: 'localhost',
-    dialect: 'postgres',
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000
-    },
-  });
+  // db =  new Sequelize(postgreUri, {
+  //   // host: 'localhost',
+  //   dialect: 'postgres',
+  //   pool: {
+  //     max: 5,
+  //     min: 0,
+  //     idle: 10000
+  //   },
+  // });
+  db =  new Sequelize(postgreUri);
+
 
 module.exports = db;
