@@ -11,7 +11,7 @@ let db;
   //   },
   // });
   db =  new Sequelize(postgreUri, {
-    host: 'localhost',
+    // host: 'localhost',
     dialect: 'postgres',
     pool: {
       max: 5,
