@@ -61,7 +61,8 @@ const crawlMediumMiddleware = (req, res, next) => {
 };
 
 const crawlMedium = (req, res) => {
-    const mediumUrl = `https://medium.com/topic/${req.query.tag}`;
+    const searchTag = req.query.tag.toLowerCase().replace(/\s+/g, '-');
+    const mediumUrl = `https://medium.com/topic/${searchTag}`;
     request( mediumUrl, (error, response, html) => {
     // let crawlData = [];
         if (!error && response.statusCode == 200) {
