@@ -48,7 +48,7 @@ app.use(function(err, req, res, next) {
     res.locals.message = errr.message;
     res.locals.error = req.app.get('env') === 'development' ? err: {};
     // send error
-    res.status(err.status || 500).json(err)
+    res.status(err.status || 500);
 });
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
