@@ -41,8 +41,8 @@ const getSearchHistory = (req, res) => {
         }
     }).then(history => {
         if (!history) {
-            return res.status(400).json({
-                error: "Not able to save"
+            return res.status(404).json({
+                error: "Not search history found"
             });
         }
         res.json(history.tags);
