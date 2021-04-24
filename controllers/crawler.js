@@ -115,6 +115,11 @@ const crawlMedium = (req, res) => {
                     error: 'Not able to scrape'
                 })
             }
+            if (response.statusCode != 200) {
+                  return res.status(400).json({
+                    error: 'Not able to scrape'
+                })
+            }
         });
     } catch (error) {
       return res.status(400).json({
