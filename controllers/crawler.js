@@ -64,7 +64,6 @@ const crawlMedium = (req, res) => {
     const searchTag = req.query.tag.toLowerCase().replace(/\s+/g, '-');
     const mediumUrl = `https://medium.com/topic/${searchTag}`;
     request( mediumUrl, (error, response, html) => {
-    // let crawlData = [];
         if (!error && response.statusCode == 200) {
             const $ = cheerio.load(html);
             let crawlData = [];
@@ -96,7 +95,7 @@ const crawlMedium = (req, res) => {
                     // console.log('crawl dataaaaaaa', crawlData)
                     // res.write(crawlData);
                     if (crawlData.length === 5) {
-                       return  res.json({
+                       return  res.status(200).json({
                             message: 'success',
                             crawlData
                         });
@@ -104,6 +103,11 @@ const crawlMedium = (req, res) => {
                   }
                 });
             });
+        }
+        if (!html) {
+          return res.status(400).json({
+            error: 'No blog found with the the given topic'
+        })
         }
         if (error) {
             return res.status(400).json({
