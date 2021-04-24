@@ -63,7 +63,6 @@ const crawlMediumMiddleware = (req, res, next) => {
 const crawlMedium = (req, res) => {
     const searchTag = req.query.tag.toLowerCase().replace(/\s+/g, '-');
     const mediumUrl = `https://medium.com/topic/${searchTag}`;
-    try {
           request( mediumUrl, (error, response, html) => {
             if (!error && response.statusCode == 200) {
                 const $ = cheerio.load(html);
@@ -117,15 +116,10 @@ const crawlMedium = (req, res) => {
             }
             if (response.statusCode != 200) {
                   return res.status(400).json({
-                    error: 'Not able to scrape'
+                    error: 'Not able to scrape, topic not found on medium'
                 })
             }
         });
-    } catch (error) {
-      return res.status(400).json({
-        error: 'No blog found with the the given topic'
-      })
-    }
 }
 
 
