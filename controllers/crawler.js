@@ -2,6 +2,8 @@ const cheerio = require('cheerio');
 const request = require('request');
 const SearchHistory = require('../models/searchhistory');
 
+const app_id  = "1b5df169"
+const app_key  = "27553dd58b7f9d90a2846dee15802172"
 
 const crawlMediumMiddleware = (req, res, next) => {
     console.log(req.query.tag);
@@ -115,8 +117,22 @@ const crawlMedium = (req, res) => {
                 })
             }
             if (response.statusCode != 200) {
-                  return res.status(400).json({
-                    error: 'Not able to scrape, topic not found on medium'
+                const word = req.query.tag.toLowerCase().replace(/-/g, ' ')
+                request(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${word}`, (error, response, body) => {
+                  console.log('body', body);
+                  console.log('response', response.statusCode);
+                  if(response.statusCode == 200) {
+                          return res.status(400).json({
+                            error: 'Not able to scrape, topic not found on medium',
+                            similarWordsData: JSON.parse(body),
+                        });
+                  }
+                  if(response.statusCode != 200) {
+                            return res.status(400).json({
+                              error: 'Not able to scrape, topic not found on medium',
+                          })
+                  }
+                  console.log('error', error);
                 })
             }
         });
