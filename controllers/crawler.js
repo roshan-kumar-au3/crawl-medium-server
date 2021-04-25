@@ -2,9 +2,6 @@ const cheerio = require('cheerio');
 const request = require('request');
 const SearchHistory = require('../models/searchhistory');
 
-const app_id  = "1b5df169"
-const app_key  = "27553dd58b7f9d90a2846dee15802172"
-
 const crawlMediumMiddleware = (req, res, next) => {
     console.log(req.query.tag);
     const tags = [];
