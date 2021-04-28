@@ -60,11 +60,10 @@ const crawlMediumMiddleware = (req, res, next) => {
 };
 
 const crawlMedium = (req, res) => {
-    const searchTag = req.query.tag.toLowerCase().replace(/\s+/g, '-');
+    const searchTag = req.query.tag.replace(/\s+/g, '-').toLowerCase();
     console.log({ searchTag });
     const mediumUrl = `https://medium.com/topic/${searchTag}`;
           request(mediumUrl, (error, response, html) => {
-            console.log('javascript', response.statusCode);
             if (response.statusCode == 200) {
                 const $ = cheerio.load(html);
                 let crawlData = [];
@@ -99,11 +98,6 @@ const crawlMedium = (req, res) => {
                     });
                 });
             }
-            if (!html) {
-              return res.status(400).json({
-                error: 'No blog found with the the given topic'
-            })
-            }
             if (response.statusCode != 200) {
                 const word = req.query.tag.toLowerCase().replace(/-/g, ' ')
                 request(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${word}`, (error, response, body) => {
@@ -123,22 +117,6 @@ const crawlMedium = (req, res) => {
                   console.log('error', error);
                 })
             }
-                const word = req.query.tag.toLowerCase().replace(/-/g, ' ')
-                request(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${word}`, (error, response, body) => {
-                  console.log('body', body);
-                  console.log('response', response.statusCode);
-                  if(response.statusCode == 200) {
-                          return res.status(400).json({
-                            error: 'Not able to scrape this topic on medium',
-                            similarWordsData: JSON.parse(body),
-                        });
-                  }
-                  if(response.statusCode != 200) {
-                            return res.status(400).json({
-                              error: 'Not able to scrape this topic on medium',
-                          })
-                  }
-                })
         });
 }
 
