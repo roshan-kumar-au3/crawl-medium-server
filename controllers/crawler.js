@@ -95,7 +95,7 @@ const crawlMedium = (req, res) => {
                             const tagText = $(tagElem).text();
                             let tagLinks = $(tagElem).attr('href');
                             if (tagLinks.startsWith('/')) {
-                              tagLinks = `https://medium.com${crawlObj.link}`
+                              tagLinks = `https://medium.com${tagLinks}`
                             }
                             if (tagText !== "Follow" && tagText !== "Get started" && tagText !== "Read more from Better Marketing") {
                               tagsArray.push({ tagName: tagText, tagLink: tagLinks });   
