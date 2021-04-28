@@ -67,7 +67,8 @@ const crawlMedium = (req, res) => {
             if (response.statusCode == 200) {
                 const $ = cheerio.load(html);
                 let crawlData = [];
-                const blogSection = $('section > div > section');
+                // const blogSection = $('section > div > section');
+                const blogSection = $('section.n');
                 blogSection.each((i, el) => {
                   const desc = $(el).find('div.gj.s').children('h3').text() == '' ? $(el).find('h3.bh.bk').children('a').first().text() : $(el).find('div.gj.s').children('h3').text() ;
                     const crawlObj = {
