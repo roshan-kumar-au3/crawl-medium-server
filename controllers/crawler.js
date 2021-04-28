@@ -91,9 +91,7 @@ const crawlMedium = (req, res) => {
                             crawlData.push(crawlObj);
                             console.log(crawlObj);                   
                         }
-                        // console.log('crawl dataaaaaaa', crawlData)
-                        // res.write(crawlData);
-                        if (crawlData.length === 5) {
+                        if (crawlData.length === 10) {
                           return  res.status(200).json({
                                 message: 'success',
                                 crawlData
