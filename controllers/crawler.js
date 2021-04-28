@@ -94,13 +94,12 @@ const crawlMedium = (req, res) => {
                         console.log('tagss', tags);
                         tags.each((tagIndex, tagElem) => {
                             const tagText = $(tagElem).text();
+                            const tagLinks = $(tagElem).attr('href');
                             if (tagText !== "Follow" && tagText !== "Get started" && tagText !== "Read more from Better Marketing") {
-                              tagsArray.push(tagText);   
+                              tagsArray.push({ tagName: tagText, tagLink: tagLinks });   
                             }
                         })
-
                         crawlObj.tags = tagsArray;
-
                         if (crawlData.length === 10) {
                           return  res.status(200).json({
                                 message: 'success',
