@@ -61,13 +61,14 @@ const crawlMediumMiddleware = (req, res, next) => {
 
 const crawlMedium = (req, res) => {
     const searchTag = req.query.tag.replace(/\s+/g, '-').toLowerCase();
+    const page = parseInt(req.query.page);
+    console.log({ page })
     console.log({ searchTag });
     const mediumUrl = `https://medium.com/topic/${searchTag}`;
           request(mediumUrl, (error, response, html) => {
             if (response.statusCode == 200) {
                 const $ = cheerio.load(html);
                 let crawlData = [];
-                // const blogSection = $('section > div > section');
                 const blogSection = $('section.n');
                 blogSection.each((i, el) => {
                   const desc = $(el).find('div.gj.s').children('h3').text() == '' ? $(el).find('h3.bh.bk').children('a').first().text() : $(el).find('div.gj.s').children('h3').text() ;
@@ -80,32 +81,46 @@ const crawlMedium = (req, res) => {
                         crawlObj.link = `https://medium.com${crawlObj.link}`
                     }
                     request(crawlObj.link, (error, response, html) => {
-                      console.log('error', error);
-                      console.log('response inner blog', response.statusCode)
                       if (!error && response.statusCode == 200) {
                         const $ = cheerio.load(html);
                         const title = $('h1').text();
                         const authorInfo = ($('a').children('p').first('.ba.bd').text() === '' ? $('span').children('a').first('.fd.fh').text() : $('a').children('p').first('.ba.bd').text() );
                         crawlObj.title = title;
                         crawlObj.author = authorInfo;
-                        crawlData.push(crawlObj);
-                        console.log(crawlData);
+                        // crawlData.push(crawlObj);
+                        // console.log(crawlData);
                         const tagsArray = [];
                         const tags = $('a.b');
-                        console.log('tagss', tags);
                         tags.each((tagIndex, tagElem) => {
                             const tagText = $(tagElem).text();
-                            const tagLinks = $(tagElem).attr('href');
+                            let tagLinks = $(tagElem).attr('href');
+                            if (tagLinks.startsWith('/')) {
+                              tagLinks = `https://medium.com${crawlObj.link}`
+                            }
                             if (tagText !== "Follow" && tagText !== "Get started" && tagText !== "Read more from Better Marketing") {
                               tagsArray.push({ tagName: tagText, tagLink: tagLinks });   
                             }
                         })
                         crawlObj.tags = tagsArray;
-                        if (crawlData.length === 10) {
-                          return  res.status(200).json({
-                                message: 'success',
-                                crawlData
+                        crawlData.push(crawlObj);
+                        
+                        if (isNaN(page) || page === 1) {
+                          if (crawlData.length === 10) {
+                            return  res.status(200).json({
+                                  message: 'success',
+                                  crawlData
+                              });
+                          } 
+                        }
+                        if (page > 1) {
+                          if (crawlData.length === page * 10) {
+                            const blogIndex = (page - 1) * 10;
+                            const lastBlogPosition = page * 10;
+                            return  res.status(200).json({
+                              message: 'success',
+                              crawlData: crawlData.slice(blogIndex, lastBlogPosition),
                             });
+                          }
                         }
                       }
                     });
