@@ -88,7 +88,19 @@ const crawlMedium = (req, res) => {
                         crawlObj.title = title;
                         crawlObj.author = authorInfo;
                         crawlData.push(crawlObj);
-                        console.log(crawlData)
+                        console.log(crawlData);
+                        const tagsArray = [];
+                        const tags = $('a.b');
+                        console.log('tagss', tags);
+                        tags.each((tagIndex, tagElem) => {
+                            const tagText = $(tagElem).text();
+                            if (tagText !== "Follow" && tagText !== "Get started" && tagText !== "Read more from Better Marketing") {
+                              tagsArray.push(tagText);   
+                            }
+                        })
+
+                        crawlObj.tags = tagsArray;
+
                         if (crawlData.length === 10) {
                           return  res.status(200).json({
                                 message: 'success',
