@@ -67,11 +67,12 @@ const crawlMedium = (req, res) => {
             if (response.statusCode == 200) {
                 const $ = cheerio.load(html);
                 let crawlData = [];
-                const blogSection = $('section > div > section.hh.hi.n');
+                const blogSection = $('section > div > section');
                 blogSection.each((i, el) => {
+                  const desc = $(el).find('div.gj.s').children('h3').text() == '' ? $(el).find('h3.bh.bk').children('a').first().text() : $(el).find('div.gj.s').children('h3').text() ;
                     const crawlObj = {
                         link:  $(el).find('a').attr('href'),
-                        description:  $(el).find('div.gj.s').children('h3').text(),
+                        description: desc,
                         readInfo: $(el).find('div.n.cr').text(),
                     }
                     if (crawlObj.link.startsWith('/')) {
