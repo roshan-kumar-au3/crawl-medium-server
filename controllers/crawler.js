@@ -61,34 +61,34 @@ const crawlMediumMiddleware = (req, res, next) => {
 
 const crawlMedium = (req, res) => {
     const searchTag = req.query.tag.toLowerCase().replace(/\s+/g, '-');
+    console.log({ searchTag });
     const mediumUrl = `https://medium.com/topic/${searchTag}`;
-          request( mediumUrl, (error, response, html) => {
-            if (!error && response.statusCode == 200) {
+          request(mediumUrl, (error, response, html) => {
+            console.log('javascript', response.statusCode);
+            if (response.statusCode == 200) {
                 const $ = cheerio.load(html);
                 let crawlData = [];
                 const blogSection = $('section > div > section.hh.hi.n');
                 blogSection.each((i, el) => {
-                    const descriptionData = $(el).children().first().text();
                     const crawlObj = {
                         link:  $(el).find('a').attr('href'),
                         description:  $(el).find('div.gj.s').children('h3').text(),
-                        // readInfo: descriptionData.substr(descriptionData.length - 17, descriptionData.length)
                         readInfo: $(el).find('div.n.cr').text(),
                     }
                     if (crawlObj.link.startsWith('/')) {
                         crawlObj.link = `https://medium.com${crawlObj.link}`
                     }
                     request(crawlObj.link, (error, response, html) => {
+                      console.log('error', error);
+                      console.log('response inner blog', response.statusCode)
                       if (!error && response.statusCode == 200) {
                         const $ = cheerio.load(html);
                         const title = $('h1').text();
                         const authorInfo = ($('a').children('p').first('.ba.bd').text() === '' ? $('span').children('a').first('.fd.fh').text() : $('a').children('p').first('.ba.bd').text() );
                         crawlObj.title = title;
                         crawlObj.author = authorInfo;
-                        if (crawlObj.title) {
-                            crawlData.push(crawlObj);
-                            console.log(crawlObj);                   
-                        }
+                        crawlData.push(crawlObj);
+                        console.log(crawlData)
                         if (crawlData.length === 10) {
                           return  res.status(200).json({
                                 message: 'success',
@@ -103,11 +103,6 @@ const crawlMedium = (req, res) => {
               return res.status(400).json({
                 error: 'No blog found with the the given topic'
             })
-            }
-            if (error) {
-                return res.status(400).json({
-                    error: 'Not able to scrape'
-                })
             }
             if (response.statusCode != 200) {
                 const word = req.query.tag.toLowerCase().replace(/-/g, ' ')
@@ -128,6 +123,22 @@ const crawlMedium = (req, res) => {
                   console.log('error', error);
                 })
             }
+                const word = req.query.tag.toLowerCase().replace(/-/g, ' ')
+                request(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${word}`, (error, response, body) => {
+                  console.log('body', body);
+                  console.log('response', response.statusCode);
+                  if(response.statusCode == 200) {
+                          return res.status(400).json({
+                            error: 'Not able to scrape this topic on medium',
+                            similarWordsData: JSON.parse(body),
+                        });
+                  }
+                  if(response.statusCode != 200) {
+                            return res.status(400).json({
+                              error: 'Not able to scrape this topic on medium',
+                          })
+                  }
+                })
         });
 }
 
