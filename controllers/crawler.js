@@ -66,14 +66,14 @@ const crawlMedium = (req, res) => {
             if (!error && response.statusCode == 200) {
                 const $ = cheerio.load(html);
                 let crawlData = [];
-                const blogSection = $('section > div > section');
+                const blogSection = $('section > div > section.hh.hi.n');
                 blogSection.each((i, el) => {
                     const descriptionData = $(el).children().first().text();
                     const crawlObj = {
                         link:  $(el).find('a').attr('href'),
-                        description:  $(el).find('a').text().substr(0, descriptionData.length - 1),
-                        author: descriptionData.substr(descriptionData.length - 44, descriptionData.length - 17),
-                        readInfo: descriptionData.substr(descriptionData.length - 17, descriptionData.length)
+                        description:  $(el).find('div.gj.s').children('h3').text(),
+                        // readInfo: descriptionData.substr(descriptionData.length - 17, descriptionData.length)
+                        readInfo: $(el).find('div.n.cr').text(),
                     }
                     if (crawlObj.link.startsWith('/')) {
                         crawlObj.link = `https://medium.com${crawlObj.link}`
@@ -82,11 +82,9 @@ const crawlMedium = (req, res) => {
                       if (!error && response.statusCode == 200) {
                         const $ = cheerio.load(html);
                         const title = $('h1').text();
-                        let author = $('a').children('p').first().text();
-                        console.log("author", author)
+                        const authorInfo = ($('a').children('p').first('.ba.bd').text() === '' ? $('span').children('a').first('.fd.fh').text() : $('a').children('p').first('.ba.bd').text() );
                         crawlObj.title = title;
-                        crawlObj.description = descriptionData.substr(title.length, descriptionData.length - 1)
-                        crawlObj.author = author;
+                        crawlObj.author = authorInfo;
                         if (crawlObj.title) {
                             crawlData.push(crawlObj);
                             console.log(crawlObj);                   
